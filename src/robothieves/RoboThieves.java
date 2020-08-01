@@ -96,10 +96,44 @@ public class RoboThieves {
     }
 
     private static void process() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int step=1;
+        ArrayList<int[]> currentPositions=new ArrayList();
+        ArrayList<int[]> nextPositions=new ArrayList();
+        currentPositions.add(start);
+        for (int[] position:currentPositions) {
+            int[] pos=move(position,0,-1); //move left
+            if (pos!=null) {
+                result[pos[0]][pos[1]]=step;
+                nextPositions.add(pos);
+            }
+            pos=move(position,0,1); //move right
+            if (pos!=null) {
+                result[pos[0]][pos[1]]=step;
+                nextPositions.add(pos);
+            }
+            pos=move(position,-1,0); //move up
+            if (pos!=null) {
+                result[pos[0]][pos[1]]=step;
+                nextPositions.add(pos);
+            }
+            
+            pos=move(position,1,0); //move down;
+            if (pos!=null) {
+                result[pos[0]][pos[1]]=step;
+                nextPositions.add(pos);
+            }
+            
+            step++;
+            currentPositions=nextPositions;
+            nextPositions=new ArrayList();
+        }
     }
 
     private static void printResult() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static int[] move(int[] position, int i, int j) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
