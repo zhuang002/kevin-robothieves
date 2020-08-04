@@ -32,8 +32,9 @@ public class RoboThieves {
 
     private static void getInput() {
         Scanner sc = new Scanner(System.in);
-        int column = sc.nextInt();
         int row = sc.nextInt();
+        int column = sc.nextInt();
+        sc.nextLine();
         map = new char[row][column];
         result = new int[row][column];
         for (int i = 0; i < row; i++) {
@@ -56,7 +57,7 @@ public class RoboThieves {
                 } else if (c == '.') {
                     result[i][j] = -1;
                 } else {
-                    result[i][j] = -2;
+                    result[i][j] = -1;
                 }
             }
         }
@@ -66,28 +67,28 @@ public class RoboThieves {
         for (int[] position : cameras) {
             for (int i = position[1] - 1; i >= 0; i--) {
                 if (map[position[0]][i] == '.') {
-                    result[position[0]][i] = -1;
+                    result[position[0]][i] = -2;
                 } else if (map[position[0]][i] == 'W') {
                     break;
                 }
             }
             for (int i = position[1] + 1; i < map[0].length; i++) {
                 if (map[position[0]][i] == '.') {
-                    result[position[0]][i] = -1;
+                    result[position[0]][i] = -2;
                 } else if (map[position[0]][i] == 'W') {
                     break;
                 }
             }
             for (int i = position[0] - 1; i >= 0; i--) {
                 if (map[i][position[1]] == '.') {
-                    result[i][position[1]] = -1;
+                    result[i][position[1]] = -2;
                 } else if (map[i][position[1]] == 'W') {
                     break;
                 }
             }
             for (int i = position[0] + 1; i < map.length; i++) {
                 if (map[i][position[1]] == '.') {
-                    result[i][position[1]] = -1;
+                    result[i][position[1]] = -2;
                 } else if (map[i][position[1]] == 'W') {
                     break;
                 }
@@ -96,45 +97,79 @@ public class RoboThieves {
     }
 
     private static void process() {
-        int step=1;
-        ArrayList<int[]> currentPositions=new ArrayList();
-        ArrayList<int[]> nextPositions=new ArrayList();
+        int step = 1;
+        ArrayList<int[]> currentPositions = new ArrayList();
+        ArrayList<int[]> nextPositions = new ArrayList();
         currentPositions.add(start);
-        for (int[] position:currentPositions) {
-            int[] pos=move(position,0,-1); //move left
-            if (pos!=null) {
-                result[pos[0]][pos[1]]=step;
-                nextPositions.add(pos);
+        while (!currentPositions.isEmpty()) {
+            for (int[] position : currentPositions) {
+                int[] pos = move(position, 0, -1); //move left
+                if (pos != null) {
+                    result[pos[0]][pos[1]] = step;
+                    nextPositions.add(pos);
+                }
+                pos = move(position, 0, 1); //move right
+                if (pos != null) {
+                    result[pos[0]][pos[1]] = step;
+                    nextPositions.add(pos);
+                }
+                pos = move(position, -1, 0); //move up
+                if (pos != null) {
+                    result[pos[0]][pos[1]] = step;
+                    nextPositions.add(pos);
+                }
+
+                pos = move(position, 1, 0); //move down;
+                if (pos != null) {
+                    result[pos[0]][pos[1]] = step;
+                    nextPositions.add(pos);
+                }
             }
-            pos=move(position,0,1); //move right
-            if (pos!=null) {
-                result[pos[0]][pos[1]]=step;
-                nextPositions.add(pos);
-            }
-            pos=move(position,-1,0); //move up
-            if (pos!=null) {
-                result[pos[0]][pos[1]]=step;
-                nextPositions.add(pos);
-            }
-            
-            pos=move(position,1,0); //move down;
-            if (pos!=null) {
-                result[pos[0]][pos[1]]=step;
-                nextPositions.add(pos);
-            }
-            
             step++;
-            currentPositions=nextPositions;
-            nextPositions=new ArrayList();
+            currentPositions = nextPositions;
+            nextPositions = new ArrayList();
         }
     }
 
     private static void printResult() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[1].length; j++) {
+                if (map[i][j] == '.') {
+                    System.out.println(result[i][j]);
+                }
+            }
+        }
     }
 
     private static int[] move(int[] position, int i, int j) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (position[0] + i >= map.length) {
+            return null;
+        }
+        if (position[1] + j >= map[1].length) {
+            return null;
+        }
+        if (result[position[0] + i][position[1] + j] >= 0) {
+            return null;
+        }
+        if (result[position[0] + i][position[1] + j] == -2) {
+            return null;
+        }
+        if (map[position[0] + i][position[1] + j] == 'C' || map[position[0] + i][position[1] + j] == 'W') {
+            return null;
+        } else if (map[position[0] + i][position[1] + j] == '.') {
+            int[] current = new int[2];
+            current[0] = position[0] + i;
+            current[1] = position[1] + j;
+            return current;
+        } else if (map[position[0] + i][position[1] + j] == 'U') {
+            return move(position, i - 1, j);
+        } else if (map[position[0] + i][position[1] + j] == 'W') {
+            return move(position, i + 1, j);
+        } else if (map[position[0] + i][position[1] + j] == 'L') {
+            return move(position, i, j - 1);
+        } else if (map[position[0] + i][position[1] + j] == 'R') {
+            return move(position, i, j + 1);
+        }
+        return null;
     }
-
 }
